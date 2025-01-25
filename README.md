@@ -32,7 +32,7 @@ While these modules are designed to provide a foundational understanding of FFT,
 
 - **Windowing Effects**: Windowing introduces side-lobe energy that can cause symmetric spreading around frequencies (spectral leakage). Increasing the number of cycles in the signal can mitigate this effect but does not eliminate it entirely.
 
-- **DC Component**: The code accounts for the DC offset by centering the signal (removing its mean). However, significant or fluctuating offsets can still impact FFT results, especially for signals with very low-frequency components.
+- **DC Component (WAV File Processing)**: When processing WAV files, the code removes the DC offset by centering the signal (subtracting its mean) to ensure that the FFT focuses on frequency content. However, significant or fluctuating DC offsets may still impact FFT results, particularly for signals with very low-frequency components.
 
 - **Fixed Base Frequency**: The analysis assumes that the base frequency of the signal is known or estimated beforehand. These modules do not include automatic frequency detection.
 
