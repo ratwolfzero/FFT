@@ -89,5 +89,3 @@ plot_signal_with_dc(output_file, duration, sampling_rate, amplitude, dc_offset)
 
 # Plot the FFT of the generated signal to inspect the DC component
 plot_fft_of_signal(output_file, duration, sampling_rate, amplitude, dc_offset)
-
-
