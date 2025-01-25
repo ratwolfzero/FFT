@@ -2,6 +2,8 @@
 
 ## Demonstration How to Use Fast Fourier Transform (FFT) with Python
 
+![FFT_1 Image](FFT_1.png)
+
 These code modules offer a very basic introductory experience with Fast Fourier Transforms (FFTs) using Python. They are explicitly designed for absolute beginners who are just starting to explore signal analysis and want a gentle, hands-on introduction to the core concepts of FFT. Think of it as your first "Hello, World!" program for signal processing. They provide a stepping stone for understanding how to analyze signals using FFT, progressing from simple, idealized scenarios to more complex, real-world examples.
 
 ### Modules Overview
