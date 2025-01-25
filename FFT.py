@@ -48,7 +48,6 @@ def compute_fft(time_domain_signal, sampling_rate):
     return frequency_vector, magnitude_spectrum, fft_result, num_samples
 
 
-
 # Function to compute inverse FFT
 def compute_ifft(fft_result):
     return ifft(fft_result).real
@@ -105,6 +104,7 @@ def plot_results(time_vector, signal_components, composite_signal, frequency_vec
     ax[1, 1].plot(time_vector, reconstructed_signal, 'r')
 
     plt.show()
+    
 
 # Main function to coordinate all steps
 def main():
