@@ -74,7 +74,7 @@ def plot_fft_of_signal(filename, duration, sampling_rate, amplitude, dc_offset):
     plt.show()
 
 # Parameters
-output_file = "wav_signal+DC.wav"
+output_file = "signal+DC.wav"
 duration = 5.0  # 5 seconds
 sampling_rate = 44100  # 44.1 kHz
 amplitude = 0.5  # Amplitude of sine wave
