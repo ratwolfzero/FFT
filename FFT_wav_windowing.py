@@ -14,13 +14,14 @@ def load_wav_file(file_path):
         n_frames = wav_file.getnframes()
         n_channels = wav_file.getnchannels()
         time_domain_signal = np.frombuffer(wav_file.readframes(n_frames), dtype=np.int16)
-
+    
     # If stereo (multi-channel), average across channels to create a mono signal
     if n_channels > 1:
         time_domain_signal = time_domain_signal.reshape(-1, n_channels).mean(axis=1)
 
-    # Normalize the signal to the range of [-1, 1]
-    time_domain_signal = time_domain_signal / np.iinfo(time_domain_signal.dtype).max
+    # Normalize the signal to the range of [-1, 1] for 16-bit PCM data
+    time_domain_signal = time_domain_signal / np.iinfo(np.int16).max
+
     return time_domain_signal, sampling_rate
 
 
@@ -107,7 +108,7 @@ def plot_results(windowed_signal, time_vector, frequency_vector, magnitude_spect
 
 
 def main():
-    file_path = os.path.expanduser("~/Projects/Python/FFT/signal1.wav")
+    file_path = os.path.expanduser("~/Projects/Python/FFT/signal+DC.wav")
     time_domain_signal, sampling_rate = load_wav_file(file_path)
     frequency = 100
     """

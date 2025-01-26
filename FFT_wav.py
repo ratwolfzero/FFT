@@ -19,8 +19,9 @@ def load_wav_file(file_path):
     if n_channels > 1:
         time_domain_signal = time_domain_signal.reshape(-1, n_channels).mean(axis=1)
 
-    # Normalize the signal to the range of [-1, 1]
-    time_domain_signal = time_domain_signal / np.iinfo(time_domain_signal.dtype).max
+    # Normalize the signal to the range of [-1, 1] for 16-bit PCM data
+    time_domain_signal = time_domain_signal / np.iinfo(np.int16).max
+
     return time_domain_signal, sampling_rate
 
 
@@ -126,7 +127,7 @@ def play_signal(time_domain_signal, sampling_rate):
 
 
 def main():
-    file_path = os.path.expanduser("~/Projects/Python/FFT/signal1.wav" )
+    file_path = os.path.expanduser("~/Projects/Python/FFT/signal2.wav" )
     time_domain_signal, sampling_rate = load_wav_file(file_path)
     frequency = 100
     num_cycles = 8
