@@ -2,24 +2,38 @@ import numpy as np
 import wave
 import matplotlib.pyplot as plt
 
-def generate_wav_with_dc(filename, duration, sampling_rate, amplitude, dc_offset):
+def generate_composite_signal_with_harmonics(duration, sampling_rate, fundamental_frequency, harmonics, amplitudes, dc_offset):
     """
-    Generate a WAV file with a DC component.
+    Generate a composite signal with selectable harmonics and a DC component.
+
+    Args:
+        duration (float): Duration of the signal in seconds.
+        sampling_rate (int): Sampling rate in Hz.
+        fundamental_frequency (float): Fundamental frequency in Hz.
+        harmonics (list): List of harmonic numbers to include (e.g., [1, 3, 5] for 1st, 3rd, and 5th harmonics).
+        amplitudes (list): List of amplitudes for each harmonic.
+        dc_offset (float): DC offset to add to the signal.
+
+    Returns:
+        np.ndarray: The generated composite signal.
+    """
+    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
+    composite_signal = dc_offset
+
+    for harmonic, amplitude in zip(harmonics, amplitudes):
+        composite_signal += amplitude * np.sin(2 * np.pi * harmonic * fundamental_frequency * t)
+
+    return composite_signal
+
+def save_signal_to_wav(filename, signal, sampling_rate):
+    """
+    Save a signal to a WAV file.
 
     Args:
         filename (str): Path to save the WAV file.
-        duration (float): Duration of the signal in seconds.
+        signal (np.ndarray): Signal to save.
         sampling_rate (int): Sampling rate in Hz.
-        amplitude (float): Amplitude of the sine wave (range: -1 to 1).
-        dc_offset (float): DC offset to add to the signal (range: -1 to 1).
     """
-    # Generate a sine wave
-    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
-    sine_wave = amplitude * np.sin(2 * np.pi * 100 * t)  # 100 Hz sine wave
-
-    # Add DC offset
-    signal = sine_wave + dc_offset
-
     # Ensure the signal is within the valid range for int16 WAV files
     signal = np.clip(signal, -1.0, 1.0)
 
@@ -31,61 +45,79 @@ def generate_wav_with_dc(filename, duration, sampling_rate, amplitude, dc_offset
         wav_file.setframerate(sampling_rate)
         wav_file.writeframes(int_signal.tobytes())
 
-def plot_signal_with_dc(duration, sampling_rate, amplitude, dc_offset):
+def plot_composite_signal(t, signal, fundamental_frequency, title):
     """
-    Plot the generated signal to visually inspect the DC offset and sine wave.
-    """
-    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
-    sine_wave = amplitude * np.sin(2 * np.pi * 1 * t)
-    signal = sine_wave + dc_offset
+    Plot the generated composite signal, showing only 10 cycles.
 
-    # Plot the signal
+    Args:
+        t (np.ndarray): Time vector.
+        signal (np.ndarray): Signal to plot.
+        fundamental_frequency (float): Fundamental frequency in Hz.
+        title (str): Plot title.
+    """
+    num_samples_per_cycle = int(len(t) / (t[-1] * fundamental_frequency))
+    num_samples_to_plot = num_samples_per_cycle * 10  # 10 cycles
+
     plt.figure(figsize=(10, 6))
-    plt.plot(t, signal, label="Signal with DC offset")
-    plt.title("Generated Signal with DC Component")
+    plt.plot(t[:num_samples_to_plot], signal[:num_samples_to_plot], label="Composite Signal")
+    plt.title(title)
     plt.xlabel("Time [s]")
     plt.ylabel("Amplitude")
     plt.grid(True)
     plt.legend()
     plt.show()
 
-def plot_fft_of_signal(duration, sampling_rate, amplitude, dc_offset):
+def plot_fft_of_signal(signal, sampling_rate):
     """
-    Plot the FFT of the generated signal to inspect the DC component in the frequency domain.
-    """
-    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
-    sine_wave = amplitude * np.sin(2 * np.pi * 100 * t)
-    signal = sine_wave + dc_offset
+    Plot the FFT of the generated signal to inspect its frequency components.
 
-    # Perform FFT
+    Args:
+        signal (np.ndarray): Signal to analyze.
+        sampling_rate (int): Sampling rate in Hz.
+    """
+    num_samples = len(signal)
     signal_fft = np.fft.fft(signal)
-    magnitude_spectrum = np.abs(signal_fft) / len(signal)  # Normalize
-    frequency_vector = np.fft.fftfreq(len(signal), d=1/sampling_rate)
+    magnitude_spectrum = np.abs(signal_fft) / num_samples  # Normalize
+    magnitude_spectrum[1:] *= 2  # Scale non-DC components
+    frequency_vector = np.fft.fftfreq(num_samples, d=1/sampling_rate)
 
-    # Plot FFT with log scale
+    # Plot FFT
     plt.figure(figsize=(10, 6))
-    plt.plot(frequency_vector[:len(frequency_vector)//2], magnitude_spectrum[:len(magnitude_spectrum)//2])
+    plt.plot(frequency_vector[:num_samples//2], magnitude_spectrum[:num_samples//2])
     plt.xscale('symlog')  # SymLog scale for frequency with DC
     plt.yscale('log')  # Log scale for magnitude
-    plt.title("FFT of Signal with DC Component")
+    plt.title("FFT of Composite Signal")
     plt.xlabel("Frequency [Hz]")
-    plt.ylabel("Magnitude (log scale)")
+    plt.ylabel("Magnitude")
     plt.grid(True)
     plt.show()
 
-# Parameters
-output_file = "signal+DC.wav"
-duration = 5.0  # 5 seconds
-sampling_rate = 44100  # 44.1 kHz
-amplitude = 0.5  # Amplitude of sine wave
-dc_offset = 0.2  # DC offset
+def main():
+    # Parameters
+    output_file = "signal_with_dc.wav"
+    duration = 5.0  # 5 seconds
+    sampling_rate = 44100  # 44.1 kHz
+    fundamental_frequency = 100  
+    harmonics = [1, 3, 5]  # Fundamental and harmonics
+    amplitudes = [0.5, 0.3, 0.2]  # Amplitudes for each harmonic
+    dc_offset = 0.2  # DC offset
 
-# Generate and save the WAV file
-generate_wav_with_dc(output_file, duration, sampling_rate, amplitude, dc_offset)
-print(f"File '{output_file}' generated with a DC component!")
+    # Generate composite signal
+    signal = generate_composite_signal_with_harmonics(
+        duration, sampling_rate, fundamental_frequency, harmonics, amplitudes, dc_offset
+    )
 
-# Plot the generated signal with DC component
-plot_signal_with_dc(duration, sampling_rate, amplitude, dc_offset)
+    # Save signal to WAV file
+    save_signal_to_wav(output_file, signal, sampling_rate)
+    print(f"File '{output_file}' generated with composite harmonics and DC component!")
 
-# Plot the FFT of the generated signal to inspect the DC component
-plot_fft_of_signal(duration, sampling_rate, amplitude, dc_offset)
+    # Plot the signal
+    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
+    plot_composite_signal(t, signal, fundamental_frequency, "Generated Composite Signal with DC Component (10 Cycles)")
+
+    # Plot the FFT of the signal
+    plot_fft_of_signal(signal, sampling_rate)
+
+if __name__ == "__main__":
+    main()
+
