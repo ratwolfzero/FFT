@@ -26,7 +26,7 @@ def generate_wav_with_dc(filename, duration, sampling_rate, amplitude, dc_offset
     # Scale to int16 range and save as WAV
     int_signal = (signal * 32767).astype(np.int16)
     with wave.open(filename, 'w') as wav_file:
-        wav_file.setnchannels(2)  # Mono
+        wav_file.setnchannels(1)  # Mono
         wav_file.setsampwidth(2)  # 16 bits per sample
         wav_file.setframerate(sampling_rate)
         wav_file.writeframes(int_signal.tobytes())
