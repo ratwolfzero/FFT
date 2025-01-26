@@ -31,7 +31,7 @@ def generate_wav_with_dc(filename, duration, sampling_rate, amplitude, dc_offset
         wav_file.setframerate(sampling_rate)
         wav_file.writeframes(int_signal.tobytes())
 
-def plot_signal_with_dc(filename, duration, sampling_rate, amplitude, dc_offset):
+def plot_signal_with_dc(duration, sampling_rate, amplitude, dc_offset):
     """
     Plot the generated signal to visually inspect the DC offset and sine wave.
     """
@@ -49,7 +49,7 @@ def plot_signal_with_dc(filename, duration, sampling_rate, amplitude, dc_offset)
     plt.legend()
     plt.show()
 
-def plot_fft_of_signal(filename, duration, sampling_rate, amplitude, dc_offset):
+def plot_fft_of_signal(duration, sampling_rate, amplitude, dc_offset):
     """
     Plot the FFT of the generated signal to inspect the DC component in the frequency domain.
     """
@@ -65,7 +65,7 @@ def plot_fft_of_signal(filename, duration, sampling_rate, amplitude, dc_offset):
     # Plot FFT with log scale
     plt.figure(figsize=(10, 6))
     plt.plot(frequency_vector[:len(frequency_vector)//2], magnitude_spectrum[:len(magnitude_spectrum)//2])
-    plt.xscale('log')  # Log scale for frequency
+    plt.xscale('symlog')  # SymLog scale for frequency with DC
     plt.yscale('log')  # Log scale for magnitude
     plt.title("FFT of Signal with DC Component")
     plt.xlabel("Frequency [Hz]")
@@ -85,7 +85,7 @@ generate_wav_with_dc(output_file, duration, sampling_rate, amplitude, dc_offset)
 print(f"File '{output_file}' generated with a DC component!")
 
 # Plot the generated signal with DC component
-plot_signal_with_dc(output_file, duration, sampling_rate, amplitude, dc_offset)
+plot_signal_with_dc(duration, sampling_rate, amplitude, dc_offset)
 
 # Plot the FFT of the generated signal to inspect the DC component
-plot_fft_of_signal(output_file, duration, sampling_rate, amplitude, dc_offset)
+plot_fft_of_signal(duration, sampling_rate, amplitude, dc_offset)
