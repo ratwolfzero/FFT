@@ -108,7 +108,7 @@ def plot_results(windowed_signal, time_vector, frequency_vector, magnitude_spect
 
 
 def main():
-    file_path = os.path.expanduser("~/Projects/Python/FFT/signal1.wav")
+    file_path = os.path.expanduser("~/Projects/Python/FFT/real_60Hz.wav")
     time_domain_signal, sampling_rate = load_wav_file(file_path)
     frequency = 100
     """
