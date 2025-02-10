@@ -54,14 +54,20 @@ def compute_ifft(fft_result):
 
 
 def calculate_energy(time_domain_signal, magnitude_spectrum, num_samples):
-    # Energy in time domain (sum of squared signal values)
-    energy_time_domain = np.sum(time_domain_signal**2)
+    """
+    Computes the energy in both the time and frequency domains to verify signal consistency.
+
+    - In the time domain, energy is the sum of squared amplitudes of the signal.
+    - In the frequency domain, energy is the sum of squared magnitudes of the spectrum, 
+      adjusted for FFT normalization.
+
+    Since amplitudes/magnitudes in each domain can differ due to normalization and scaling, 
+    this check ensures energy consistency between representations.
+    """
+    energy_time_domain = np.sum(time_domain_signal**2)  # Sum of squared signal values
     
-    # Energy in frequency domain: Sum of squared magnitudes of magnitude_spectrum
-    energy_frequency_domain = np.sum(magnitude_spectrum**2)
-    
-    # Adjust for the FFT normalization by multiplying by num_samples//2
-    energy_frequency_domain *= num_samples // 2
+    # Compute energy in the frequency domain (Parseval's theorem consideration)
+    energy_frequency_domain = np.sum(magnitude_spectrum**2) * (num_samples // 2)
 
     return energy_time_domain, energy_frequency_domain
 
